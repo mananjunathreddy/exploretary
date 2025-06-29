@@ -1,0 +1,30 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+df = pd.read_csv("Titanic-Dataset (1).csv")
+df['Survived'] = pd.to_numeric(df['Survived'], errors='coerce')
+print("Summary Statistics:\n", df.describe())
+df.select_dtypes(include=['number']).hist(figsize=(12, 8), bins=20)
+plt.suptitle("Histograms of Numeric Features")
+plt.tight_layout()
+plt.show()
+numeric_cols = df.select_dtypes(include=['number']).columns
+plt.figure(figsize=(12, 8))
+for i, col in enumerate(numeric_cols):
+    plt.subplot(3, 3, i+1)
+    sns.boxplot(x=df[col])
+    plt.title(f'Boxplot of {col}')
+plt.tight_layout()
+plt.show()
+corr = df[numeric_cols].corr()
+plt.figure(figsize=(10, 6))
+sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f")
+plt.title("Correlation Matrix")
+plt.show()
+pairplot_cols = ['Survived', 'Pclass', 'Age', 'Fare', 'SibSp', 'Parch']
+sns.pairplot(df[pairplot_cols].dropna(), hue='Survived', palette='coolwarm')
+plt.suptitle("Pairplot of Selected Features", y=1.02)
+plt.show()
+fig = px.histogram(df, x="Age", color="Survived", nbins=30, title="Age Distribution by Survival")
+fig.show()
